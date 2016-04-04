@@ -27,9 +27,18 @@ namespace CarPark.Facts
 
                 Assert.Equal("1707", t.PlateNo);
                 Assert.Equal(9, t.DateIn.Hour);
-                Assert.Equal(13, t.DateOut.Hour);
+                Assert.Equal(13, t.DateOut.Value.Hour);
             }   
 
+            [Fact]
+            public void NewTicket_HasNoDateOut()
+            {
+
+                var t = new Ticket();
+
+                Assert.Null(t.DateOut);
+
+            }
         }
 
         public class ParkingFeeProperty
@@ -44,7 +53,7 @@ namespace CarPark.Facts
                 t.DateOut = DateTime.Parse("9:15");
 
                 // act
-                decimal fee = t.ParkingFee;
+                decimal fee = t.ParkingFee.Value;
 
                 // assert
                 Assert.Equal(0m, fee);
@@ -62,11 +71,12 @@ namespace CarPark.Facts
                 t.DateOut = DateTime.Parse("9:15:01");
 
                 // act
-                decimal fee = t.ParkingFee;
+                decimal fee = t.ParkingFee.Value;
 
                 // assert
                 Assert.Equal(50m, fee);
             }
+
             [Fact]
             public void WithInFirst3HoursII_50Baht()
             {
@@ -77,11 +87,12 @@ namespace CarPark.Facts
                 t.DateOut = DateTime.Parse("12:11:01");
 
                 // act
-                decimal fee = t.ParkingFee;
+                decimal fee = t.ParkingFee.Value;
 
                 // assert
                 Assert.Equal(50m, fee);
             }
+
             [Fact]
             public void WithInFirst4Hours_50Baht()
             {
@@ -92,11 +103,48 @@ namespace CarPark.Facts
                 t.DateOut = DateTime.Parse("15:11");
 
                 // act
-                decimal fee = t.ParkingFee;
+                decimal fee = t.ParkingFee.Value;
 
                 // assert
                 Assert.Equal(110m, fee);
             }
+
+            [Fact]
+            public void NewTicket_DontKnowParkingFee()
+            {
+                var t = new Ticket();
+                t.PlateNo = "155";
+                t.DateIn = DateTime.Parse("9:00");
+                t.DateOut = null;
+                // act
+
+
+                // assert
+                Assert.Null(t.ParkingFee);
+
+            }
+
+
+            [Fact]
+            public void DateOutIsBeforeDateIN_ThrowsException()
+            {
+                var t = new Ticket();
+                t.PlateNo = "155";
+                t.DateIn = DateTime.Parse("9:00");
+                t.DateOut = DateTime.Parse("8:00"); ;
+                // act
+
+
+                // assert
+                var ex = Assert.Throws<Exception>(() =>
+               {
+                   var fee = t.ParkingFee;
+               });
+
+                Assert.Equal("Invalid date", ex.Message);
+            }
+
+
         }
     }
 }
