@@ -11,14 +11,13 @@ namespace CarPark.Models
     {
       
         public DateTime DateIn { get; set; }
-        public DateTime ? DateOut  { get; set; }
+        public DateTime  DateOut  { get; set; }
         public decimal ParkingFee
         {
             get
             {
-                if (DateOut == null)
-                    throw new Exception("Not DateOut Value")
-                TimeSpan ans = DateOut.Value - DateIn;
+                
+                TimeSpan ans = DateOut - DateIn;
 
                 if (ans.TotalSeconds <= (15 * 60))
                     return 0;
