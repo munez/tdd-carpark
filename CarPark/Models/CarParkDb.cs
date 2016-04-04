@@ -8,6 +8,6 @@ namespace CarPark.Models
 {
     public class CarParkDb:DbContext
     {
-        public DbSet<Ticket>Tickets { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
     }
 }
