@@ -144,6 +144,24 @@ namespace CarPark.Facts
                 Assert.Equal("Invalid date", ex.Message);
             }
 
+            [Theory]
+            [InlineDataAttribute("9:00","09:13",0)]
+            [InlineDataAttribute("9:00", "10:00", 50)]
+            [InlineDataAttribute("9:00", "11:00", 50)]
+            [InlineDataAttribute("9:00", "12:00", 50)]
+            [InlineDataAttribute("9:00", "12:10", 50)]
+            [InlineDataAttribute("9:00", "12:30", 80)]
+            public void SamplingTests(string dateIn, string dateOut, decimal expectedFee)
+            {
+                var t = new Ticket();
+                t.DateIn = DateTime.Parse(dateIn);
+                t.DateOut = DateTime.Parse(dateOut);
+
+                var fee = t.ParkingFee;
+
+                Assert.Equal(expectedFee, fee);
+            }
+
 
         }
     }
